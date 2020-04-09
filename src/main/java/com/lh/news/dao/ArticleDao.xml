@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lh.news.dao.ArticleDao">
+
+	<insert id="insertArticle">
+		insert into cms_article
+		<set>
+			<if test="title!=null and title!=''"> title = #{title},</if>
+			<if test="content!=null and content!=''"> content = #{content},</if>
+			<if test="picture!=null and picture!=''"> picture = #{picture},</if>
+			<if test="channelId!=null and channelId!=0"> channel_id = #{channelId},</if>
+			<if test="categoryId!=null and categoryId!=0"> category_id = #{categoryId},</if>
+			<if test="userId!=null and userId!=0"> user_id = #{userId},</if>
+			<if test="hits!=null"> hits = #{hits},</if>
+			<if test="hot!=null"> hot = #{hot},</if>
+			<if test="status!=null"> status = #{status},</if>
+			<if test="deleted!=null"> deleted = #{deleted},</if>
+			<if test="created!=null"> created = #{created},</if>
+			<if test="updated!=null"> updated = #{updated},</if>
+			<if test="summary!=null and summary!=''"> summary = #{summary},</if>
+			<if test="contentType!=null"> content_type = #{contentType},</if>
+			<if test="keywords!=null and keywords!=''"> keywords = #{keywords},</if>
+			<if test="original!=null and original!=''"> original = #{original},</if>
+			<if test="commentNum!=null and commentNum!=''"> comment_num = #{commentNum},</if>
+		</set>
+	</insert>
+	
+	<resultMap type="Article" id="articleMap" autoMapping="true">
+		<id column="id" property="id"/>
+		<result column="title" property="title"/>
+		<result column="content" property="content"/>
+		<result column="picture" property="picture"/>
+		<result column="channel_id" property="channelId"/>
+		<result column="category_id" property="categoryId"/>
+		<result column="user_id" property="userId"/>
+		<result column="hits" property="hits"/>
+		<result column="status" property="status"/>
+		<result column="hot" property="hot"/>
+		<result column="created" property="created"/>
+		
+		
+		
+		<association property="channel" javaType="Channels" select="selectChannel" column="{channelId = channel_id}">
+		
+		</association>
+		
+		<association property="category" javaType="Categories" select="selectCategory" column="{categoryId = category_id}">
+		
+		</association>
+		
+		<association property="user" javaType="Users" select="selectUser" column="{userId = user_id}">
+		
+		</association>
+	</resultMap>
+	
+	
+	<select id="selectArticles" resultMap="articleMap">
+		select * from cms_article
+		
+		<where>
+			<if test="userId!=null">
+				user_id = #{userId}
+			</if>
+			<if test="title!=null and title!=''">
+				and title like concat('%',#{title},'%')
+			</if>
+			<if test="status!=null">
+				and status = #{status}
+			</if>
+			<!--根据栏目查询  -->
+			<if test="channelId!=null">
+				and channel_id = #{channelId}
+			</if>
+			<!-- 根据分类查询 -->
+			<if test="categoryId!=null">
+				and category_id = #{categoryId}
+			</if>
+			<!-- 热点文章 -->
+			<if test="hot!=null">
+				and hot = #{hot}
+			</if>
+			<if test="created!=null">
+				and created between #{created} and now()
+			</if>
+		</where>
+		<!--  按照文章发布时间倒序排序-->
+		<if test="created==null">
+			order by created desc
+		</if>
+		
+	</select>
+
+
+
+	<select id="selectChannel" resultType="Channels">
+		select * from cms_channel where id  = #{channelId}
+	</select>
+	
+	<select id="selectCategory" resultType="Categories">
+		select * from cms_category where id  = #{categoryId}
+	</select>
+	
+	<select id="selectUser" resultType="Users">
+		select * from cms_user where id  = #{userId}
+	</select>
+	
+	
+	
+	
+	
+
+	<select id="select" resultMap="articleMap">
+		select * from cms_article where id = #{id}
+	</select>
+	
+	
+	<update id="updateArticle">
+		update cms_article
+		<trim prefix="set" suffix="where id = #{id}" suffixOverrides=",">
+		<if test="status!=null">
+			status = #{status},
+		</if>
+		<if test="hot!=null">
+			hot = #{hot},
+		</if>
+		</trim>
+	</update>
+</mapper>

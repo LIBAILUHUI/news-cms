@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lh.news.dao.ChannelDao">
+	<select id="selectChannels" resultType="Channels">
+		select * from cms_channel
+	</select>
+	<select id="selectCategories" resultType="Categories">
+		select * from cms_category where channel_id = #{channelId}
+	</select>
+</mapper>
