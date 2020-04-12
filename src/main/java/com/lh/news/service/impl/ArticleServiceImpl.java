@@ -53,5 +53,10 @@ public class ArticleServiceImpl implements ArticleService {
 		}
 	}
 
+	@Override
+	public Article selectByTitle(String title) {
+		return articleDao.selectByTitle(title);
+	}
+
 	
 }

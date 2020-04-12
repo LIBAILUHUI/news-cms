@@ -7,7 +7,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Insert title here</title>
+<title>管理员登录</title>
 <link href="/resource/css/jquery/screen.css" rel="stylesheet">
 <link href="/resource/css/bootstrap.min.css" rel="stylesheet">
 <script type="text/javascript" src="/resource/js/jquery-3.2.1.js"></script>
@@ -15,8 +15,10 @@
 <script type="text/javascript" src="/resource/js/jquery.validate.js"></script>
 </head>
 <body>
-	<div class="container-fluid">
-	<span id="msg" class="text-danger"></span>
+	<div class="container-fluid w-50">
+	<h2>管理员登录</h2>
+	<hr>
+	<span id="msg" class="text-danger">${msg}</span>
 	<form id="form1">
 		<div class="form-group">
 			<label for="username">用户名</label> <input
@@ -32,32 +34,7 @@
 		
 		
 		<div class="form-group">
-			<label for="repassword">确认密码</label> <input
-				type="password" class="form-control" id="repassword"
-				name="repassword"> 
-		</div>
-		
-		<div class="form-group form-inline">
-		<div class="form-group form-check">
-			<label class="mr-1">性别：</label> 
-			<input
-				type="radio" class="form-check-input" id="boy"
-				name="gender" value="0" checked> 
-				<label class="form-check-label" for="boy">男</label> 
-		</div>
-		
-		<div class="form-group form-check ml-1">
-			
-			<input
-				type="radio" class="form-check-input" id="girl"
-				name="gender" value="0"> 
-				<label class="form-check-label" for="girl">女</label>
-		</div>
-		</div>
-		
-		
-		<div class="form-group">
-			<button class="btn btn-info" type="submit">注册</button>
+			<button class="btn btn-info" type="submit">登录</button>
 			<button class="btn btn-warning" type="reset">重置</button>
 		</div>
 		
@@ -70,49 +47,28 @@
 			rules:{
 				username:{
 					required:true,//用户名非空
-					rangelength:[2,6],//用户名长度2-6之间
-					remote:{ //检查用户是否被注册
-						type:"post",
-						data:{
-							username:function(){
-							return $("#username").val();
-						}},
-						url:"/passport/checkUsername",
-					}
 				},
 				password:{
 					required:true,//密码非空
-					rangelength:[6,12],//密码长度6-12
 				},
-				repassword:{
-					equalTo:"#password",
-				}
+				
 			},
 			//错误消息提示
 			messages:{
 				username:{
 					required:"用户名不能为空",
-					rangelength:"用户名长度2-6之间",
-					remote:"用户名已存在",
 				},
 				password:{
 					required:"密码不能为空",
-					rangelength:"密码长度6-12之间",
 				},
-				repassword:{
-					equalTo:"两次密码输入不一致",
-				}
 			},
 			submitHandler:function(){
-				$.post("/passport/reg",$("#form1").serialize(),function(result){
-					if(result){
-						//如果注册成功，跳转到登录页面
-						if(result.code==200){
-							$("#title").text(result.msg);
-							$("#passport").load("/passport/login");
-						}
+				$.post("/passport/admin/login",$("#form1").serialize(),function(result){
+					if(result.code==200){
+						//如果登录成功，刷新页面
+						location = "/admin/";
 					}else{
-						//注册失败
+						//登录失败
 						$("#msg").text(result.msg);
 					}
 				});

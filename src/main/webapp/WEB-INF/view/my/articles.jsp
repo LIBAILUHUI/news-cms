@@ -26,6 +26,18 @@
 						<p class="mt-2">
 							<fmt:formatDate value="${article.created}"
 								pattern="yyyy-MM-dd HH:mm:ss"></fmt:formatDate>
+								<c:if test="${article.status==1}">
+									<span class="text-success">审核通过</span>
+								</c:if>
+								
+								<c:if test="${article.status==0}">
+									<span class="text-warning">审核中</span>
+								</c:if>
+								
+								<c:if test="${article.status==-1}">
+									<span class="text-danger">审核未通过</span>
+								</c:if>
+								
 								<!-- Button trigger modal -->
 						<button type="button" class="btn btn-link" data-toggle="modal"
 							data-target="#exampleModalLong" onclick="detail(${article.id})">详情</button>

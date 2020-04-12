@@ -16,7 +16,7 @@
 </head>
 <body>
 	<div class="container-fluid">
-	<span id="msg" class="text-danger"></span>
+	<span id="msg" class="text-danger">${msg}</span>
 	<form id="form1">
 		<div class="form-group">
 			<label for="username">用户名</label> <input
@@ -29,10 +29,6 @@
 				type="password" class="form-control" id="password"
 				name="password"> 
 		</div>
-		
-		
-		
-		
 		
 		
 		<div class="form-group">

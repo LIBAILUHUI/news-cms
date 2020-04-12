@@ -9,7 +9,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>个人中心</title>
 <link href="/resource/css/bootstrap.min.css" rel="stylesheet">
+<link href="/resource/css/index.css" rel="stylesheet">
 <script type="text/javascript" src="/resource/js/jquery-3.2.1.js"></script>
+<script type="text/javascript" src="/resource/js/popper.min.js"></script>
 <script type="text/javascript" src="/resource/js/bootstrap.min.js"></script>
 </head>
 <body>
@@ -18,10 +20,22 @@
 		<!-- 头 -->
 		<div class="row" style="height:64px">
 			<div class="col-md-12"  style="background-color:#24292e;height:65px">
-				<img alt="" src="/resource/images/love.jpeg" width="65px" height="65px" class="rounded-circle">
+				<a href="/"><img alt="" src="/resource/images/love.jpeg" width="65px" height="65px" class="rounded-circle"></a>
 				<span></span>
 				<font color="white">个人中心</font>
+				<div class="btn-group dropleft float-sm-right mt-3">
+							<button type="button" class="btn btn-dark btn-sm dropdown-toggle"
+								data-toggle="dropdown" aria-haspopup="true"
+								aria-expanded="false">${sessionScope.user.username}</button>
+							<div class="dropdown-menu">
+								<ul>
+									<li><a href="/my">个人中心</a></li>
+									<li><a href="/passport/logout">注销</a></li>
+								</ul>
+							</div>
+						</div>
 			</div>
+			
 		</div>
 		
 		<!-- body -->
@@ -30,7 +44,7 @@
 				<div class="list-group text-center"  >
 				  <a href="#" data="/my/articles" class="list-group-item list-group-item-action active">我的文章</a>
 				  <a href="#" data="/my/publish" class="list-group-item list-group-item-action list-group-item-light">发布文章</a>
-				  <a href="#" class="list-group-item list-group-item-action list-group-item-light">我的收藏</a>
+				  <a href="#" data="/my/collections" class="list-group-item list-group-item-action list-group-item-light">我的收藏</a>
 				  <a href="#" class="list-group-item list-group-item-action list-group-item-light">我的评论</a>
 				  <a href="#" class="list-group-item list-group-item-action list-group-item-light">个人设置</a>
 				</div>

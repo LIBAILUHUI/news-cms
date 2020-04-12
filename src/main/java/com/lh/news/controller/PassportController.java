@@ -67,7 +67,7 @@ public class PassportController {
 	/**
 	 * 
 	 * @Title: login 
-	 * @Description: 去登录页面
+	 * @Description: 注册用户去登录页面
 	 * @return
 	 * @return: String
 	 */
@@ -79,7 +79,7 @@ public class PassportController {
 	/**
 	 * 
 	 * @Title: login 
-	 * @Description: 执行登陆
+	 * @Description: 注册用户执行登陆
 	 * @param user
 	 * @return
 	 * @return: CMSResult<Users>
@@ -108,10 +108,87 @@ public class PassportController {
 		return result;
 	}
 	
+	
+	/**
+	 * 
+	 * @Title: logout 
+	 * @Description: 注销
+	 * @param session
+	 * @return
+	 * @return: String
+	 */
 	@RequestMapping("logout")
 	public String logout(HttpSession session) {
 		session.invalidate();
 		//注销后刷新首页
 		return "redirect:/";
 	}
+	
+	
+	/**
+	 * 
+	 * @Title: checkUsername 
+	 * @Description: 注册时检查用户是否被注册
+	 * @param username
+	 * @return
+	 * @return: boolean
+	 */
+	@ResponseBody
+	@RequestMapping("checkUsername")
+	public boolean checkUsername(String username) {
+		Users user = userService.selectByName(username);
+		return user==null;
+	}
+	
+	/**
+	 * 
+	 * @Title: loginAdmin 
+	 * @Description: 跳转到管理员的登录页面
+	 * @return
+	 * @return: String
+	 */
+	@RequestMapping(value = {"/admin/login","admin/","admin"})
+	public String loginAdmin() {
+		return "passport/login_admin";
+	}
+	
+	/**
+	 * 
+	 * @Title: login 
+	 * @Description: 注册用户执行登陆
+	 * @param user
+	 * @return
+	 * @return: CMSResult<Users>
+	 */
+	@ResponseBody
+	@PostMapping(value = {"admin/login"})
+	public CMSResult<Users> loginAdmin(Users user,HttpSession session){
+		CMSResult<Users> result = new CMSResult<Users>();
+		try {
+			Users u = userService.login(user);
+			result.setCode(200);
+			result.setMsg("登陆成功");
+			//role 1:管理员 0普通用户
+			if(u.getRole().equals("0")) {
+				throw new CMSException("没有登录权限");
+			}
+			session.setAttribute("admin", u);
+			//result.setData(u);
+			//登陆成功用户信息存session
+			
+		} catch (CMSException e) {//捕获自定义异常
+			e.printStackTrace();
+			result.setCode(300);//错误码
+			result.setMsg(e.message);//错误消息
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			result.setCode(400);//错误码
+			result.setMsg("未知错误，请联系管理员");//错误消息
+		}
+		return result;
+	}
+	
+	
+	
 }

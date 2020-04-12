@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.lh</groupId>
-  <artifactId>lh-cms</artifactId>
+  <groupId>com.lhgy</groupId>
+  <artifactId>lhgy-cms</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>war</packaging>
   
@@ -38,7 +38,7 @@
   		<!-- 依赖的工具类 ，包括String,Date,Random-->
 	  	<dependency>
 	  		<groupId>com.lh</groupId>
-			<artifactId>lh-common</artifactId>
+			<artifactId>lhgy-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 	  	</dependency>
   	

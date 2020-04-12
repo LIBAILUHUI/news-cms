@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +20,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.PageInfo;
 import com.lh.news.domain.Article;
+import com.lh.news.domain.Collections;
+import com.lh.news.domain.Users;
 import com.lh.news.service.ArticleService;
+import com.lh.news.service.CollectionService;
 
 /**
  * 
@@ -32,6 +38,9 @@ public class MyController {
 
 	@Autowired
 	private ArticleService articleService;
+	
+	@Autowired
+	private CollectionService collectionService;
 	
 	
 	//进入个人中心首页，支持三种访问方式
@@ -48,8 +57,9 @@ public class MyController {
 	 * @return: String
 	 */
 	@RequestMapping("articles")
-	public String articles(Model model,Article article,@RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "3") Integer pageSize) {
-		article.setUserId(6); //6是1712d  7是lily
+	public String articles(Model model,Article article,@RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "3") Integer pageSize,HttpSession session) {
+		Users user = (Users) session.getAttribute("user");
+		article.setUserId(user.getId()); //6是1712d  7是lily
 		PageInfo<Article> info = articleService.selectArticles(article, pageNum, pageSize);
 		model.addAttribute("info", info);
 		model.addAttribute("alist", info.getList());
@@ -68,6 +78,10 @@ public class MyController {
 		return "my/publish";
 	}
 	
+	//获取cms.properties里key为filePath的值
+	@Value(value = "${filePath}")
+	private String filePath;
+	
 	/**
 	 * 
 	 * @Title: publish 
@@ -78,11 +92,11 @@ public class MyController {
 	 */
 	@ResponseBody
 	@PostMapping("publish")
-	public boolean publish(Article article,MultipartFile file) {
+	public boolean publish(Article article,MultipartFile file,HttpSession session) {
 		//判断是否上传了文件
 		if(file!=null && !file.isEmpty()) {
 			//执行文件上传
-			String path = "d:/pic/"; //文件上传路径
+			String path = filePath; //文件上传路径,具体值在cms.properties里边
 			//防止文件重名使用UUID,先获取原始名称
 			String oldFileName = file.getOriginalFilename();
 			String fileName = UUID.randomUUID() + oldFileName.substring(oldFileName.lastIndexOf("."));
@@ -98,7 +112,9 @@ public class MyController {
 		}
 		
 		//需要初始化数据，作者后期应从session获取
-		article.setUserId(6);
+		Users user = (Users) session.getAttribute("user");
+		
+		article.setUserId(user.getId());
 		article.setStatus(0);
 		article.setCreated(new Date());
 		article.setHits(0);
@@ -106,7 +122,6 @@ public class MyController {
 		article.setDeleted(0);//未删除
 		article.setContentType(0);//普通html文本
 		
-		;
 		return articleService.insertArticle(article);
 	}
 	
@@ -117,6 +132,25 @@ public class MyController {
 		return articleService.select(id);
 	}
 	
+	//展示
+	@RequestMapping("collections")
+	public String collections(Collections collection,@RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "3") Integer pageSize,Model model,HttpSession session ) {
+		Users user = (Users) session.getAttribute("user");
+		collection.setUserId(user.getId());
+		PageInfo<Collections> info = collectionService.selectCollections(collection, pageNum, pageSize);
+		model.addAttribute("info", info);
+		return "my/collections";
+	}
 	
+	@ResponseBody
+	@RequestMapping("unCollect")
+	public boolean unCollect(Integer id) {
+		return collectionService.deleteCollection(id)>0;
+	}
 	
+	@RequestMapping("articleByTitle")
+	public String articleByTitle(String title,Model model) {
+		model.addAttribute("article", articleService.selectByTitle(title));
+		return "/my/collectionArticle";
+	}
 }

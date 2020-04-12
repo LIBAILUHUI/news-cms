@@ -40,7 +40,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<result column="status" property="status"/>
 		<result column="hot" property="hot"/>
 		<result column="created" property="created"/>
-		
+		<result column="comment_num" property="commentNum"/>
 		
 		
 		<association property="channel" javaType="Channels" select="selectChannel" column="{channelId = channel_id}">
@@ -69,6 +69,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 			<if test="status!=null">
 				and status = #{status}
+			</if>
+			<if test="deleted!=null">
+				and deleted = #{deleted}
+			</if>
+			<if test="contentType!=null">
+				and content_type = #{contentType}
 			</if>
 			<!--根据栏目查询  -->
 			<if test="channelId!=null">
@@ -128,4 +134,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</if>
 		</trim>
 	</update>
+	
+	
+	<select id="selectByTitle" resultType="Article">
+		select * from cms_article where title = #{title}
+	</select>
 </mapper>

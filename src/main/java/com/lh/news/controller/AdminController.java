@@ -16,6 +16,7 @@ import com.lh.news.domain.Users;
 import com.lh.news.service.ArticleService;
 import com.lh.news.service.UserService;
 
+
 /**
  * 
  * @ClassName: AdminController 
@@ -80,5 +81,12 @@ public class AdminController {
 	@PostMapping("user/update")
 	public boolean updateUser(Users user) {
 		return userService.updateUser(user);
+	}
+		
+	//文章详情
+	@ResponseBody
+	@RequestMapping("article")
+	public Article article(Integer id) {
+		return articleService.select(id);
 	}
 }

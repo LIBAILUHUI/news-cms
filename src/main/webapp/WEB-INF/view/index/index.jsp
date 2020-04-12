@@ -47,11 +47,28 @@ li {
 	list-style: none;
 }
 
-.ex {
+.ex1 {
 	width: 250px;
 	white-space: nowrap; /*不换行的*/
 	overflow: hidden; /*超出范围隐藏*/
 	text-overflow: ellipsis; /*超出用省略号*/
+}
+
+.ex {
+	width: 250px;
+	overflow: hidden;/*超出范围隐藏*/
+	text-overflow: ellipsis;/*超出用省略号 */
+	display: -webkit-box;
+	-webkit-line-clamp: 2; /*控制多行的行数*/
+	-webkit-box-orient: vertical;
+
+
+	/* width: 250px;
+	overflow: hidden; 
+	text-overflow: ellipsis; 
+	display:-webkit-box; 
+	-webkit-box-orient:vertical;
+	-webkit-line-clamp:2; */
 }
 </style>
 
@@ -163,7 +180,7 @@ li {
 									</h5>
 									<p>${hotArticle.user.username}
 										<fmt:formatDate value="${hotArticle.created}"
-											pattern="yyyy-MM-dd" />
+											pattern="yyyy-MM-dd HH:mm:ss" />
 									</p>
 								</div>
 							</div>
@@ -231,18 +248,15 @@ li {
 							<ul class="list-unstyled">
 								<li class="media"><a href="/detail?id=${lastArticle.id}"
 									target="_blank"> <img width="40px" height="40px"
-										src="/pic/${lastArticle.picture}" class="mr-3" alt="...">
+										src="/pic/${lastArticle.picture}" class="mr-2" alt="...">
 								</a>
-									<div class="media-body">
-										<a href="/detail?id=${lastArticle.id}" target="_blank">
-											<h6 class="mt-0 mb-1 ex" style="width: 210px">${lastArticle.title}</h6>
-											<h6 class="mt-0 mb-1 ex" style="width: 210px">
-												<fmt:formatDate value="${lastArticle.created}"
-													pattern="yyyy-MM-dd HH:mm:ss" />
-
-
+									<div class="media-body ex">
+										
+											<h6 class="mt-0 mb-1 ex" style="width: 205px"><a href="/detail?id=${lastArticle.id}" target="_blank">${lastArticle.title}</a></h6>
+											<h6 class="mt-0 mb-1 ex" style="width: 205px">
+												<%-- <fmt:formatDate value="${lastArticle.created}"
+													pattern="yyyy-MM-dd HH:mm:ss" /> --%>
 											</h6>
-										</a>
 									</div></li>
 							</ul>
 							<hr>
@@ -260,18 +274,18 @@ li {
 							<ul class="list-unstyled">
 								<li class="media"><a href="/detail?id=${article24.id}"
 									target="_blank"> <img width="40px" height="40px"
-										src="/pic/${article24.picture}" class="mr-3" alt="...">
+										src="/pic/${article24.picture}" class="mr-2" alt="...">
 								</a>
-									<div class="media-body">
-										<a href="/detail?id=${article24.id}" target="_blank">
-											<h6 class="mt-0 mb-1 ex" style="width: 210px">${article24.title}</h6>
-											<h6 class="mt-0 mb-1 ex" style="width: 210px">
-												<fmt:formatDate value="${article24.created}"
-													pattern="yyyy-MM-dd HH:mm:ss" />
+									<div class="media-body ex">
+										
+											<h6 class="mt-0 mb-1 ex" style="width: 205px"><a href="/detail?id=${article24.id}" target="_blank">${article24.title}</a></h6>
+											<h6 class="mt-0 mb-1 ex" style="width: 205px">
+												<%-- <fmt:formatDate value="${article24.created}"
+													pattern="yyyy-MM-dd HH:mm:ss" /> --%>
 
 
 											</h6>
-										</a>
+										
 									</div></li>
 							</ul>
 							<hr>

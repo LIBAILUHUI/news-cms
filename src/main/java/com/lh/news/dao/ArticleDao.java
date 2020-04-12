@@ -29,5 +29,23 @@ public interface ArticleDao {
 	
 	Article select(Integer id);
 	
+	/**
+	 * 
+	 * @Title: updateArticle 
+	 * @Description: 改热门和状态
+	 * @param article
+	 * @return
+	 * @return: int
+	 */
 	int updateArticle(Article article);
+	
+	/**
+	 * 
+	 * @Title: selectByTitle 
+	 * @Description:根据文章标题查文章详情
+	 * @param title
+	 * @return
+	 * @return: Article
+	 */
+	Article selectByTitle(String title);
 }

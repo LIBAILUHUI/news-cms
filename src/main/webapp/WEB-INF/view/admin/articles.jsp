@@ -136,7 +136,7 @@
 		var aid;
 		function detail(id){
 			aid = id;
-			$.get("/my/article",{id:id},function(article){
+			$.get("/admin/article",{id:id},function(article){
 				$("#aContent").html(article.content);
 				$("#aTitle").html(article.title);
 			});
