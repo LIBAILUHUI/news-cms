@@ -1,5 +1,8 @@
 package com.lh.news.controller;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import javax.annotation.Resource;
 import javax.naming.spi.DirStateFactory.Result;
 import javax.servlet.http.HttpSession;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.lh.common.utils.DateUtil;
 import com.lh.news.domain.Users;
 import com.lh.news.service.UserService;
 import com.lh.news.util.CMSException;
@@ -48,6 +52,18 @@ public class PassportController {
 	public CMSResult<Users> reg(Users user,Model model) {
 		CMSResult<Users> result = new CMSResult<>();
 		try {
+			user.setNickname(user.getUsername());
+			user.setCreated(new Date());
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(1970, 0, 1);
+			Date startDate = calendar.getTime();
+			
+			Calendar c = Calendar.getInstance();
+			c.set(2015, 0, 1);
+			Date endDate = c.getTime();
+			
+			Date birth = DateUtil.randomDate(startDate, endDate);
+			user.setBirthday(birth);
 			userService.insertUser(user);
 			result.setCode(200);//状态码
 			result.setMsg("恭喜注册成功，请登录");//错误消息

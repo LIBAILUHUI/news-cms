@@ -91,6 +91,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="created!=null">
 				and created between #{created} and now()
 			</if>
+			<!-- 按文章类型查询 -->
+			<if test="contentType!=null">
+				and content_Type =#{contentType}
+			</if>
 		</where>
 		<!--  按照文章发布时间倒序排序-->
 		<if test="created==null">

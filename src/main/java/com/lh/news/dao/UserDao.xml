@@ -28,8 +28,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		
 	
 	<insert id="insertUser">
-		insert into cms_user(username,password,gender) 
-		values(#{username},#{password},#{gender})
+		insert into cms_user(username,password,gender,nickname,created,birthday) 
+		values(#{username},#{password},#{gender},#{nickname},#{created},#{birthday})
 	
 	</insert>
 	

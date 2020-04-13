@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.lh.common.utils.DateUtil;
 import com.lh.common.utils.RandomUtil;
 import com.lh.news.domain.Article;
@@ -28,6 +32,8 @@ import com.lh.news.service.ChannelService;
 import com.lh.news.service.CollectionService;
 import com.lh.news.service.CommentService;
 import com.lh.news.service.SlideService;
+import com.lh.news.util.ArticleEnum;
+import com.lh.news.vo.ArticleVO;
 
 /**
  * 
@@ -69,6 +75,7 @@ public class IndexController {
 		Thread t3;
 		Thread t4;
 		Thread t5;
+		Thread t6;
 		
 		t1 = new Thread(new Runnable() {
 			
@@ -159,12 +166,29 @@ public class IndexController {
 			}
 		});
 		
+		
+		// 显示图片集
+		t6 = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				// 右侧边栏显示最新的5个图片集文章
+				Article picArticle = new Article();
+				picArticle.setStatus(1);
+				picArticle.setDeleted(0);
+				picArticle.setContentType(ArticleEnum.IMAGE.getCode());// 图片集
+				PageInfo<Article> picArticles = articleService.selectArticles(picArticle, 1, 5);
+				model.addAttribute("picArticles", picArticles);
+			}
+		});
+		
 		//启动线程
 		t1.start();
 		t2.start();
 		t3.start();
 		t4.start();
 		//t5.start();
+		t6.start();
 		
 		//等所有子线程执行完了再执行最外边的主线程
 		try {
@@ -173,6 +197,7 @@ public class IndexController {
 			t3.join();
 			t4.join();
 			//t5.join();
+			t6.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -207,6 +232,33 @@ public class IndexController {
 		
 		return "index/article";
 	}
+	
+	/**
+	 * 
+	 * @Title: detailPic
+	 * @Description: 显示图片集内容
+	 * @return
+	 * @return: String
+	 */
+	@RequestMapping("detailPic")
+	public String detailPic(Integer id,Model model) {
+		Article article = articleService.select(id);
+		String content = article.getContent();
+		List<ArticleVO> picList = new ArrayList<ArticleVO>();
+
+		Gson gson = new Gson();
+		JsonArray array = new JsonParser().parse(content).getAsJsonArray();
+		for (JsonElement jsonElement : array) {
+			// 把json转为java
+			ArticleVO vo = gson.fromJson(jsonElement, ArticleVO.class);
+			picList.add(vo);
+		}
+		model.addAttribute("title", article.getTitle());// 标题
+		model.addAttribute("picList", picList);// 标题包含的 图片的地址和描述
+		return "index/articlePic";
+	}
+	
+	
 	
 	
 	

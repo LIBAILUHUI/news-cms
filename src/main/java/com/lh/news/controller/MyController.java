@@ -2,9 +2,12 @@ package com.lh.news.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +22,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
 import com.lh.news.domain.Article;
 import com.lh.news.domain.Collections;
 import com.lh.news.domain.Users;
 import com.lh.news.service.ArticleService;
 import com.lh.news.service.CollectionService;
+import com.lh.news.util.ArticleEnum;
+import com.lh.news.vo.ArticleVO;
 
 /**
  * 
@@ -142,6 +148,14 @@ public class MyController {
 		return "my/collections";
 	}
 	
+	/**
+	 * 
+	 * @Title: unCollect 
+	 * @Description: 取消收藏
+	 * @param id
+	 * @return
+	 * @return: boolean
+	 */
 	@ResponseBody
 	@RequestMapping("unCollect")
 	public boolean unCollect(Integer id) {
@@ -152,5 +166,86 @@ public class MyController {
 	public String articleByTitle(String title,Model model) {
 		model.addAttribute("article", articleService.selectByTitle(title));
 		return "/my/collectionArticle";
+	}
+	
+	/**
+	 * 
+	 * @Title: publishpic 
+	 * @Description: 去发布图片集页面
+	 * @return
+	 * @return: String
+	 */
+	@RequestMapping("publishpic")
+	public String publishpic() {
+		return "my/publishpic";
+	}
+	
+	
+	/**
+	 * 
+	 * @Title: publish
+	 * @Description: 发布图片集
+	 * @param article
+	 * @return
+	 * @return: boolean
+	 */
+	@ResponseBody
+	@PostMapping("publishpic")
+	public boolean publishpic(HttpServletRequest request, Article article, MultipartFile[] files,
+			String[] descr) {
+
+		String newFilename = null;
+		List<ArticleVO> list = new ArrayList<ArticleVO>();// 用来存放图片的地址和描述
+		int i = 0;
+		for (MultipartFile file : files) {
+			ArticleVO vo = new ArticleVO();
+			if (!file.isEmpty()) {
+				// 文件上传路径.把文件放入项目的 /resource/pic 下
+				String path =filePath;
+				// 为了防止文件重名.使用UUID 的方式重命名上传的文件
+				String oldFilename = file.getOriginalFilename();
+				// a.jpg
+				newFilename = UUID.randomUUID() + oldFilename.substring(oldFilename.lastIndexOf("."));
+				File f = new File(path, newFilename);
+			
+				vo.setUrl(newFilename);//封装的文件的名称
+				vo.setDescr(descr[i]);//封装文件描述
+				i++;
+				list.add(vo);
+
+				// 写入硬盘
+				try {
+					file.transferTo(f);
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
+		}
+		
+		article.setPicture(newFilename);// 图片集封面
+		Gson gson = new Gson();
+		// 使用gson,把java对象转为json
+		article.setContent(gson.toJson(list));
+		// 初始化设置
+		article.setStatus(1);// 
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			return false;
+		}
+		Users user = (Users) session.getAttribute("user");
+		article.setUserId(user.getId());// 发布人
+		article.setHits(0);
+		article.setHot(0);
+		article.setDeleted(0);
+		article.setCreated(new Date());
+		article.setUpdated(new Date());
+		// 图片集标识
+		article.setContentType(ArticleEnum.IMAGE.getCode());
+
+		return articleService.insertArticle(article);
+
 	}
 }

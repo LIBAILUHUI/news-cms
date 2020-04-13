@@ -46,6 +46,7 @@
 				  <a href="#" data="/my/publish" class="list-group-item list-group-item-action list-group-item-light">发布文章</a>
 				  <a href="#" data="/my/collections" class="list-group-item list-group-item-action list-group-item-light">我的收藏</a>
 				  <a href="#" class="list-group-item list-group-item-action list-group-item-light">我的评论</a>
+				  <a href="#" data="/my/publishpic" class="list-group-item list-group-item-action list-group-item-light">发布图片集</a>
 				  <a href="#" class="list-group-item list-group-item-action list-group-item-light">个人设置</a>
 				</div>
 				

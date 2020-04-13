@@ -237,9 +237,30 @@ li {
 				</c:if>
 			</div>
 
-
+			<!-- 右边部分 -->
+			<div class="col-md-3">
+			  <!-- 最新图片集 -->
+			  <div class="card" style="width: 18rem;">
+					<div class="card-header">最新图片集</div>
+					<div class="card-body">
+						<ul class="list-unstyled">
+							<c:forEach items="${picArticles.list }" var="article">
+								<li class="media"><img style="width: 40px; height: 40px"
+									src="/pic/${article.picture }" class="rounded" alt="...">
+									<div class="media-body ex">
+										<a href="/detailPic?id=${article.id }" target="_blank">${article.title }</a>
+									</div></li>
+								<hr>
+							</c:forEach>
+						</ul>
+					</div>
+				</div>
+			
+			
+			
+			
 			<!-- 右侧边栏显示最新的5篇文章 -->
-			<div class="col-md-3 mt-3">
+			
 				<div class="card" style="width: 18rem;">
 					<div class="card-header">最新文章</div>
 
