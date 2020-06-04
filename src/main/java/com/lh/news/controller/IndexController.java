@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import org.aspectj.weaver.ast.And;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,12 +26,15 @@ import com.lh.news.domain.Categories;
 import com.lh.news.domain.Channels;
 import com.lh.news.domain.Collections;
 import com.lh.news.domain.Comment;
+import com.lh.news.domain.MilitaryReport;
+import com.lh.news.domain.MilitaryType;
 import com.lh.news.domain.Slide;
 import com.lh.news.domain.Users;
 import com.lh.news.service.ArticleService;
 import com.lh.news.service.ChannelService;
 import com.lh.news.service.CollectionService;
 import com.lh.news.service.CommentService;
+import com.lh.news.service.MilitaryService;
 import com.lh.news.service.SlideService;
 import com.lh.news.util.ArticleEnum;
 import com.lh.news.vo.ArticleVO;
@@ -60,15 +64,23 @@ public class IndexController {
 	@Resource
 	private CommentService commentService;
 	
+	@Resource
+	private MilitaryService militaryService;
+	
 	
 	//进入首页
 	@RequestMapping(value = {"","/","index"})
-	public String index(Model model,Article article,@RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "5") Integer pageSize) {
+	public String index(Model model,Article article,MilitaryReport report,@RequestParam(defaultValue = "1") Integer pageNum,@RequestParam(defaultValue = "5") Integer pageSize,String key) {
 		
 		article.setStatus(1); //显示审核通过的,0刚发布,1审核通过,-1驳回
 		article.setDeleted(0);  //显示未删除的,0未删除,1删除
 		article.setContentType(0);//文章类型,0html类型,1json
 		model.addAttribute("article", article);
+		model.addAttribute("report", report);
+		
+		
+		long start = System.currentTimeMillis();
+		
 		
 		Thread t1;
 		Thread t2;
@@ -76,6 +88,7 @@ public class IndexController {
 		Thread t4;
 		Thread t5;
 		Thread t6;
+		Thread t7;
 		
 		t1 = new Thread(new Runnable() {
 			
@@ -110,20 +123,35 @@ public class IndexController {
 			
 			@Override
 			public void run() {
-				//3.栏目为空查询广告和热点文章
-				if(null==article.getChannelId()) {
-					//查询广告
-					List<Slide> slist = slideService.selectSlides();
-					model.addAttribute("slist", slist);
-					//查询热点文章
-					Article hotArticle = new Article();
-					hotArticle.setStatus(1);
-					hotArticle.setDeleted(0);
-					hotArticle.setContentType(0);
-					hotArticle.setHot(1);//1:热点文章
-					PageInfo<Article> info = articleService.selectArticles(hotArticle, pageNum, pageSize);
+				
+				if(null!=key && key.trim().length()!=0) {
+					PageInfo<Article> info = articleService.selectFromES(key, pageNum, pageSize);
 					model.addAttribute("info", info);
+					model.addAttribute("key", key);
+				}else {
+					
+				
+				
+				//3.栏目为空查询广告和热点文章
+					if(null==article.getChannelId()) {
+						//查询广告
+						List<Slide> slist = slideService.selectSlides();
+						model.addAttribute("slist", slist);
+						//查询热点文章
+						Article hotArticle = new Article();
+						hotArticle.setStatus(1);
+						hotArticle.setDeleted(0);
+						hotArticle.setContentType(0);
+						hotArticle.setHot(1);//1:热点文章
+						
+						PageInfo<Article> info = articleService.selectHotArticleRedis(hotArticle, pageNum, pageSize);
+						
+						//以前的
+						//PageInfo<Article> info = articleService.selectArticles(hotArticle, pageNum, pageSize);
+						model.addAttribute("info", info);
+					}
 				}
+				
 			}
 		});
 		
@@ -136,7 +164,10 @@ public class IndexController {
 				lastArticles.setStatus(1);
 				lastArticles.setDeleted(0);
 				lastArticles.setContentType(0);
-				PageInfo<Article> info = articleService.selectArticles(lastArticles, 1, 5);
+				//redis优化
+				PageInfo<Article> info = articleService.selectLastArticlesRedis(lastArticles, 1, 5);
+				//以前的
+				//PageInfo<Article> info = articleService.selectArticles(lastArticles, 1, 5);
 				model.addAttribute("lastArticles", info.getList());
 			}
 		});
@@ -182,6 +213,19 @@ public class IndexController {
 			}
 		});
 		
+		t7 = new Thread(new Runnable() {
+			//军事频道
+			@Override
+			public void run() {
+				List<MilitaryType> typeList = militaryService.selecTypes();
+				model.addAttribute("typeList", typeList);
+				if(null!=report.getTypeId() && report.getTypeId()!=0) {
+					PageInfo<MilitaryReport> minfo = militaryService.selectReportByTid(report.getTypeId(), pageNum, pageSize);
+					model.addAttribute("mlist", minfo.getList());
+				}
+			}
+		});
+		
 		//启动线程
 		t1.start();
 		t2.start();
@@ -189,6 +233,7 @@ public class IndexController {
 		t4.start();
 		//t5.start();
 		t6.start();
+		t7.start();
 		
 		//等所有子线程执行完了再执行最外边的主线程
 		try {
@@ -198,9 +243,13 @@ public class IndexController {
 			t4.join();
 			//t5.join();
 			t6.join();
+			t7.join();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		
+		long end = System.currentTimeMillis();
+		System.out.println("加载首页耗费"+(end-start)+"毫秒");
 		
 		return "index/index";
 	}
@@ -296,4 +345,7 @@ public class IndexController {
 		//没有登陆不能评论
 		return false;
 	}
+	
+	
+	
 }

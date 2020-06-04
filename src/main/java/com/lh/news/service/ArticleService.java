@@ -21,12 +21,39 @@ public interface ArticleService {
 	/**
 	 * 
 	 * @Title: selectArticles 
-	 * @Description: TODO
+	 * @Description: 根据条件查询文章，动态sql
 	 * @param article
 	 * @return
 	 * @return: PageInfo<Article>
 	 */
 	PageInfo<Article> selectArticles(Article article,Integer pageNum,Integer pageSize);
+	
+	/**
+	 * 
+	 * @Title: selectArticlesRedis 
+	 * @Description: redis优化，根据条件查询最新文章，动态sql
+	 * @param article
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 * @return: PageInfo<Article>
+	 */
+	PageInfo<Article> selectLastArticlesRedis(Article article,Integer pageNum,Integer pageSize);
+	
+	
+	
+	/**
+	 * 
+	 * @Title: selectHotArticleRedis 
+	 * @Description: 查询热门文章，redis
+	 * @param article
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 * @return: PageInfo<Article>
+	 */
+	PageInfo<Article> selectHotArticleRedis(Article article,Integer pageNum,Integer pageSize);
+	
 	
 	/**
 	 * 
@@ -59,4 +86,28 @@ public interface ArticleService {
 	 * @return: Article
 	 */
 	Article selectByTitle(String title);
+
+	
+	/**
+	 * 
+	 * @Title: selectALlArticleByCondition 
+	 * @Description: 根据某些条件查询全部文章，返回List
+	 * @param article
+	 * @return
+	 * @return: List<Article>
+	 */
+	List<Article> selectALlArticleByCondition(Article article);
+	
+	/**
+	 * 
+	 * @Title: selectFromES 
+	 * @Description: 从es中搜索
+	 * @param key
+	 * @param pageNum
+	 * @param pageSize
+	 * @return
+	 * @return: PageInfo<Article>
+	 */
+	PageInfo<Article> selectFromES(String key,Integer pageNum,Integer pageSize);
+	
 }

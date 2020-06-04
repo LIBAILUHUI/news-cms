@@ -10,7 +10,7 @@
 <title>Insert title here</title>
 <link href="/resource/css/bootstrap.min.css" rel="stylesheet">
 <link href="/resource/css/index.css" rel="stylesheet">
-<script type="text/javascript" src="/resource/js/jquery-3.2.1.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/jquery-3.2.1.js"></script>
 <script type="text/javascript" src="/resource/js/popper.min.js"></script>
 <script type="text/javascript" src="/resource/js/bootstrap.min.js"></script>
 <style type="text/css">
@@ -119,6 +119,7 @@ li {
 						<li><a class="channel-item ${article.channelId==channel.id?"
 							active":""}" href="/?channelId=${channel.id}">${channel.name}</a></li>
 					</c:forEach>
+					
 				</ul>
 
 			</div>
@@ -235,16 +236,84 @@ li {
 
 					</div>
 				</c:if>
+				
+				<c:if test="${report.typeId!=null}">
+				<ul>
+					<li class="sub-item">
+						<c:forEach items="${typeList}" var="mtype">
+							<a href="/?typeId=${mtype.typeId}">${mtype.typeName}</a>
+						</c:forEach>
+					</li>
+				</ul>
+				</c:if>
+				
+				
+				<c:if test="${report.typeId!=null and typeId!=0}">
+					<div>
+						<c:forEach items="${mlist}" var="mreport">
+							<p>
+							
+								<a href="${mreport.videoAddr}">${mreport.title}</a>
+							
+							</p>
+							<p>
+								<fmt:formatDate value="${mreport.makeDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
+							</p>
+							<hr>
+						</c:forEach>
+					</div>
+				</c:if>
+				
+				
+				
 			</div>
 
 			<!-- 右边部分 -->
 			<div class="col-md-3">
+			
+			
+			
+			<!-- <div class="card" style="width:18rm">
+				<div class="card-header">其他频道</div>
+				<div class="card-body">
+					<ul>
+						<li class="sub-item" >
+							<a href="/?typeId=0">军事频道</a>
+						</li>
+					</ul>
+				</div>
+			</div> -->
+			
+			<div class="mt-3">
+			<form action="/" method="post">
+				<input type="text" name="key" value="${key}">
+				<button class="btn btn-info">搜索</button>
+			</form>
+			</div>
+			
+			
+			<%--  <form>
+					<!--  搜索框 -->
+					<div class="card mt-3"
+						style="width: 18rem; margin-bottom: 5px; border: 0px">
+						<div class="form-inline">
+							<input type="text" placeholder="请输入要搜索的内容" class="form-control"
+								style="width: 14rem; margin-right: 5px" name="key" value="${key}">
+								<input type="hidden" name="pageNum">
+							<!-- <button class="btn btn-info" type="button">搜索</button> -->
+							<input type="submit" value="搜索"  class="btn btn-info">
+						</div>
+	
+					</div>
+				</form> --%>
+			
+			
 			  <!-- 最新图片集 -->
-			  <div class="card" style="width: 18rem;">
+			  <div class="card mt-3" style="width: 18rem;">
 					<div class="card-header">最新图片集</div>
 					<div class="card-body">
 						<ul class="list-unstyled">
-							<c:forEach items="${picArticles.list }" var="article">
+							<c:forEach items="${picArticles.list}" var="article">
 								<li class="media"><img style="width: 40px; height: 40px"
 									src="/pic/${article.picture }" class="rounded" alt="...">
 									<div class="media-body ex">
@@ -261,7 +330,7 @@ li {
 			
 			<!-- 右侧边栏显示最新的5篇文章 -->
 			
-				<div class="card" style="width: 18rem;">
+				<div class="card mt-3" style="width: 18rem;">
 					<div class="card-header">最新文章</div>
 
 					<div class="card-body">
@@ -353,6 +422,7 @@ li {
 		function goPage(pageNum) {
 			var channelId = '${article.channelId}';
 			var categoryId = '${article.categoryId}';
+			var key = '${key}';
 			var url = "/?pageNum=" + pageNum;
 
 			if (channelId) {
@@ -362,6 +432,9 @@ li {
 				url += "&categoryId=" + categoryId;
 			}
 
+			if(key){
+				url += "&key="+key;
+			}
 			location = url;
 		}
 

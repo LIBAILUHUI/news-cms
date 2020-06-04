@@ -5,7 +5,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="com.lh.news.dao.ArticleDao">
 
-	<insert id="insertArticle">
+	<insert id="insertArticle" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
 		insert into cms_article
 		<set>
 			<if test="title!=null and title!=''"> title = #{title},</if>

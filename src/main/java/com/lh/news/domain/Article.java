@@ -3,6 +3,9 @@ package com.lh.news.domain;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+
 /**
  * 
  * @ClassName: Article 
@@ -10,6 +13,7 @@ import java.util.Date;
  * @author: Administrator
  * @date: 2020年3月31日 下午5:48:09
  */
+@Document(indexName = "cms",type = "article")
 public class Article implements Serializable{
 	/**
 	 * @fieldName: serialVersionUID
@@ -18,6 +22,7 @@ public class Article implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	//编号
+	@Id
 	private Integer id;
 	//标题
 	private String title;

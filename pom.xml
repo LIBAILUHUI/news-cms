@@ -32,18 +32,14 @@
      <!-- 执行Maven install或Maven test命令时控制台输出乱码的解决办法-->
       <argLine>-Dfile.encoding=UTF-8</argLine>  
 	</properties>
-  
-  
   <dependencies>
-  		<!-- 依赖的工具类 ，包括String,Date,Random-->
-	  	<dependency>
-	  		<groupId>com.lh</groupId>
+  
+  
+  		<dependency>
+			<groupId>com.lh</groupId>
 			<artifactId>lhgy-common</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-	  	</dependency>
-  	
-	<!-- jar依赖 -->
-
+		</dependency>
 		<!-- spring 及springMVC -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -231,17 +227,94 @@
 			<artifactId>gson</artifactId>
 			<version>2.8.5</version>
 		</dependency>
-  
+  			<!-- kafka和spring的整合包 -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+			<version>2.2.0.RELEASE</version>
+		</dependency>
+
+		<!-- kafka的依赖包 -->
+		<dependency>
+			<groupId>org.apache.kafka</groupId>
+			<artifactId>kafka_2.10</artifactId>
+			<version>0.8.2.1</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jmxri</artifactId>
+					<groupId>com.sun.jmx</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jms</artifactId>
+					<groupId>javax.jms</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jmxtools</artifactId>
+					<groupId>com.sun.jdmk</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>5.1.2.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.12</version>
+		</dependency>
+		<!-- json格式序列化 -->
+  	<dependency>
+  		<groupId>com.fasterxml.jackson.core</groupId>
+  		<artifactId>jackson-databind</artifactId>
+  		<version>2.9.1</version>
+  	</dependency>
+  	
+  	<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.47</version>
+	</dependency>
+		
+	<!-- java连接redis的jar包 -->
+  	<dependency>
+    	<groupId>redis.clients</groupId>
+    	<artifactId>jedis</artifactId>
+    	<version>2.9.0</version>
+	</dependency>
+	<!--spring整合redis  -->
+  	<dependency>
+   		<groupId>org.springframework.data</groupId>
+    	<artifactId>spring-data-redis</artifactId>
+    	<version>2.1.5.RELEASE</version>
+	</dependency>
+	
+	<!-- elasticsearch和spring的整合包 -->
+	<dependency>
+		<groupId>org.springframework.data</groupId>
+		<artifactId>spring-data-elasticsearch</artifactId>
+		<version>3.1.2.RELEASE</version>
+	</dependency>
+	
   </dependencies>
-  
-  	<!-- 构建项目 -->
-	<build>
-		<plugins>
-			<!-- jetty配置 -->
+  <build>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-compiler-plugin</artifactId>
+  			<version>3.8.0</version>
+  			<configuration>
+  				<source>1.8</source>
+  				<target>1.8</target>
+  			</configuration>
+  		</plugin>
+  		
+  		<!-- jetty配置 -->
 			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
-				<version>9.3.7.v20160115</version>
+				<version>9.4.24.v20191120</version>
 				<configuration>
 					<httpConnector>
 						<!-- 项目端口号 -->
